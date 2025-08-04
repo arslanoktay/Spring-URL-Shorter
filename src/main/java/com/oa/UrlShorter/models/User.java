@@ -1,13 +1,26 @@
 package com.oa.UrlShorter.models;
 
 import jakarta.persistence.*;
-import org.springframework.context.annotation.Role;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(unique = true, nullable = false)
+    private String email;
+    @Column(nullable = false)
+    private String password;
+    @Column(nullable = false)
+    private String name;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
     public Long getId() {
         return id;
     }
@@ -55,21 +68,4 @@ public class User {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(unique = true, nullable = false)
-    private String email;
-    @Column(nullable = false)
-    private String password;
-    @Column(nullable = false)
-    private String name;
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Role role;
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-
 }

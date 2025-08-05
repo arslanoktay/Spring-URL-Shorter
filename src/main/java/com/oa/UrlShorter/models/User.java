@@ -1,25 +1,36 @@
 package com.oa.UrlShorter.models;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import org.hibernate.annotations.ColumnDefault;
+
+import java.time.Instant;
 
 @Entity
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_gen")
+    @SequenceGenerator(name = "users_id_gen", sequenceName = "users_id_seq", allocationSize = 1)
+    @Column(name = "id", nullable = false)
     private Long id;
-    @Column(unique = true, nullable = false)
+
+    @Column(name = "email", nullable = false, length = 100)
     private String email;
-    @Column(nullable = false)
+
+    @Column(name = "password", nullable = false, length = 100)
     private String password;
-    @Column(nullable = false)
+
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
-    @Column(nullable = false)
+
+    @ColumnDefault("'ROLE_USER'")
+    @Column(name = "role", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     private Role role;
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
 
     public Long getId() {
         return id;
@@ -61,11 +72,12 @@ public class User {
         this.role = role;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
+
 }

@@ -3,7 +3,7 @@ package com.oa.UrlShorter.services;
 import com.oa.UrlShorter.DTOs.ShortUrlDTO;
 import com.oa.UrlShorter.models.ShortUrl;
 import com.oa.UrlShorter.models.User;
-import com.oa.UrlShorter.models.UserDTO;
+import com.oa.UrlShorter.DTOs.UserDTO;
 import org.springframework.stereotype.Component;
 
 @Component

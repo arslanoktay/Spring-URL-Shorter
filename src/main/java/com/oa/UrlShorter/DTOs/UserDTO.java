@@ -1,4 +1,4 @@
-package com.oa.UrlShorter.models;
+package com.oa.UrlShorter.DTOs;
 
 import java.io.Serializable;
 

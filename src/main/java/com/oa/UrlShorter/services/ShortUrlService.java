@@ -1,5 +1,6 @@
 package com.oa.UrlShorter.services;
 
+import com.oa.UrlShorter.DTOs.CreateShortUrlCmd;
 import com.oa.UrlShorter.DTOs.ShortUrlDTO;
 import com.oa.UrlShorter.models.ShortUrl;
 import com.oa.UrlShorter.repository.UrlRepository;
@@ -21,5 +22,11 @@ public class ShortUrlService {
     public List<ShortUrlDTO> findAllPublicShortUrls() {
         return urlRepository.findByPublicShortUrls()
                 .stream().map(entityMapper::toShortUrlDTO).toList();
+    }
+
+    public ShortUrlDTO createShortUrl(CreateShortUrlCmd createShortUrlCmd) {
+        var shortUrl = new ShortUrl();
+
+        return null;
     }
 }

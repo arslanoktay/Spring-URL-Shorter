@@ -1,7 +1,5 @@
 package com.oa.UrlShorter.DTOs;
 
-import com.oa.UrlShorter.models.UserDTO;
-
 import java.io.Serializable;
 import java.time.Instant;
 

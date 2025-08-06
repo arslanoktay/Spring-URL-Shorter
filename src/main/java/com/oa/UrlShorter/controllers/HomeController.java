@@ -1,6 +1,6 @@
 package com.oa.UrlShorter.controllers;
 
-import com.oa.UrlShorter.models.ShortUrl;
+import com.oa.UrlShorter.DTOs.ShortUrlDTO;
 import com.oa.UrlShorter.services.ShortUrlService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +19,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model) {
-        List<ShortUrl> shortUrls = shortUrlService.findAllPublicShortUrls();
+        List<ShortUrlDTO> shortUrls = shortUrlService.findAllPublicShortUrls();
 
         model.addAttribute("shortUrls", shortUrls);
         model.addAttribute("baseUrl", "http://localhost:8080");

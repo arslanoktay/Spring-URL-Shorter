@@ -16,6 +16,8 @@ public interface UrlRepository extends JpaRepository<ShortUrl, Long> {
     @EntityGraph(attributePaths = {"createdBy"})
     List<ShortUrl> findByPublicShortUrls();
 
+    boolean existsByShortKey(String shortKey);
+
 
     // List<ShortUrl> findByIsPrivateIsFalseOrderByCreatedAtDesc();
 }

@@ -1,5 +1,6 @@
 package com.oa.UrlShorter.controllers;
 
+import com.oa.UrlShorter.ApplicationProperties;
 import com.oa.UrlShorter.DTOs.CreateShortUrlCmd;
 import com.oa.UrlShorter.DTOs.CreateShortUrlForm;
 import com.oa.UrlShorter.DTOs.ShortUrlDTO;
@@ -19,16 +20,18 @@ import java.util.List;
 public class HomeController {
 
     private final ShortUrlService shortUrlService;
+    private final ApplicationProperties properties;
 
-    public HomeController(ShortUrlService shortUrlService) {
+    public HomeController(ShortUrlService shortUrlService, ApplicationProperties properties) {
         this.shortUrlService = shortUrlService;
+        this.properties = properties;
     }
 
     @GetMapping("/")
     public String home(Model model) {
         List<ShortUrlDTO> shortUrls = shortUrlService.findAllPublicShortUrls();
         model.addAttribute("shortUrls", shortUrls);
-        model.addAttribute("baseUrl", "http://localhost:8080");
+        model.addAttribute("baseUrl", properties.baseUrl());
         model.addAttribute("createShortUrlForm", new CreateShortUrlForm(""));
         return "index";
     }
@@ -42,7 +45,7 @@ public class HomeController {
         if(bindingResult.hasErrors()) {
             List<ShortUrlDTO> shortUrls = shortUrlService.findAllPublicShortUrls();
             model.addAttribute("shortUrls", shortUrls);
-            model.addAttribute("baseUrl", "http://localhost:8080");
+            model.addAttribute("baseUrl", properties.baseUrl());
             return "index";
         }
 
@@ -51,7 +54,7 @@ public class HomeController {
             var shortUrlDto = shortUrlService.createShortUrl(cmd);
 
             redirectAttributes.addFlashAttribute("successMessage","Short URL created successfully "
-                        + "http://localhost:8080/s/" + shortUrlDto.shortKey());
+                        + properties.baseUrl() + "/s/" + shortUrlDto.shortKey());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to create Short Url");
         }
@@ -63,3 +66,4 @@ public class HomeController {
 
 // thymleaf ile artık index.html değil html desen olur.
 // @ResponseBody -> direk bir mesaj dönmeyi sağlar(String json vb.). RestController oto dahildir. Controller ise view arar.
+// Form başarılı ise her zaman redirect atmamız gerekmekte

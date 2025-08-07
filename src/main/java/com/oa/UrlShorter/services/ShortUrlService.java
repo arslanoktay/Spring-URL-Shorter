@@ -12,6 +12,7 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -76,6 +77,21 @@ public class ShortUrlService {
         return sb.toString();
     }
 
+    @Transactional
+    public Optional<ShortUrlDTO> accessShortUrl(String shortKey) {
+        Optional<ShortUrl> shortUrlOptional = urlRepository.findByShortKey(shortKey);
+        if (shortUrlOptional.isEmpty()) {
+            return Optional.empty();
+        }
+        ShortUrl shortUrl = shortUrlOptional.get();
+
+        if (shortUrl.getExpiresAt() != null && shortUrl.getExpiresAt().isBefore(Instant.now())) {
+            return Optional.empty();
+        }
+        shortUrl.setClickCount(shortUrl.getClickCount()+1);
+        urlRepository.save(shortUrl);
+        return shortUrlOptional.map(entityMapper::toShortUrlDTO);
+    }
 }
 
 // createShortUrl metodu hem write hem read transactional diğerleri read sadece.Override ettik

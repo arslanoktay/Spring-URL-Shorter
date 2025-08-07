@@ -5,6 +5,8 @@ import com.oa.UrlShorter.DTOs.CreateShortUrlCmd;
 import com.oa.UrlShorter.DTOs.CreateShortUrlForm;
 import com.oa.UrlShorter.DTOs.ShortUrlDTO;
 import com.oa.UrlShorter.exceptions.ShortUrlNotFoundException;
+import com.oa.UrlShorter.models.User;
+import com.oa.UrlShorter.services.SecurityUtils;
 import com.oa.UrlShorter.services.ShortUrlService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -24,14 +26,19 @@ public class HomeController {
 
     private final ShortUrlService shortUrlService;
     private final ApplicationProperties properties;
+    private final SecurityUtils securityUtils;
 
-    public HomeController(ShortUrlService shortUrlService, ApplicationProperties properties) {
+    public HomeController(ShortUrlService shortUrlService, ApplicationProperties properties, SecurityUtils securityUtils) {
         this.shortUrlService = shortUrlService;
         this.properties = properties;
+        this.securityUtils = securityUtils;
     }
 
     @GetMapping("/")
     public String home(Model model) {
+        User currentUser = securityUtils.getCurrentUser();
+
+
         List<ShortUrlDTO> shortUrls = shortUrlService.findAllPublicShortUrls();
         model.addAttribute("shortUrls", shortUrls);
         model.addAttribute("baseUrl", properties.baseUrl());
@@ -74,6 +81,11 @@ public class HomeController {
         ShortUrlDTO shortUrlDTO = shortUrlDTOOptional.get();
         return "redirect:" + shortUrlDTO.originalUrl();
 
+    }
+
+    @GetMapping("/login")
+    String loginForm() {
+        return "login";
     }
 
 }

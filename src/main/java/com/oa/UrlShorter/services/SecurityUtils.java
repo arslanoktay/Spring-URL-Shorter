@@ -21,6 +21,11 @@ public class SecurityUtils {
             String email = authentication.getName();
             return userRepository.findByEmail(email).orElse(null);
         }
-        return
+        return null;
+    }
+
+    public Long getCurrentUserId() {
+        User user = getCurrentUser();
+        return user != null ? user.getId() : null;
     }
 }

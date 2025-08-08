@@ -11,6 +11,7 @@ import com.oa.UrlShorter.services.SecurityUtils;
 import com.oa.UrlShorter.services.ShortUrlService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -42,6 +43,7 @@ public class HomeController {
         User currentUser = securityUtils.getCurrentUser();
 
         this.addShortUrlsDataToModel(model,page);
+        model.addAttribute("paginationUrl","/");
         model.addAttribute("createShortUrlForm", new CreateShortUrlForm("", false, null));
         return "index";
     }
@@ -91,6 +93,41 @@ public class HomeController {
     @GetMapping("/login")
     String loginForm() {
         return "login";
+    }
+
+    @GetMapping("/my-urls")
+    public String showUserUrls(
+        @RequestParam(defaultValue = "1") int page,
+        Model model)
+    {
+        var currentUserId = securityUtils.getCurrentUserId();
+        PagedResult<ShortUrlDTO> myUrls = shortUrlService.getUserShortUrls(currentUserId, page, properties.pageSize());
+        model.addAttribute("shortUrls", myUrls);
+        model.addAttribute("baseUrl", properties.baseUrl());
+        model.addAttribute("paginationUrl","/my-urls");
+        return "my-urls";
+    }
+
+    @PostMapping("/delete-urls")
+    @PreAuthorize("hasAnyRole('USER', 'MODERATOR')") //@PreAuthorize("isAuthenticated()")
+    public String deleteUrls(
+            @RequestParam(value = "ids", required = false) List<Long> ids,
+            RedirectAttributes redirectAttributes)
+    {
+        if (ids == null || ids.isEmpty()) {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage", "No URLs selected for delete"
+            );
+            return "redirect:/my-urls";
+        }
+        try {
+            var currentUserId = securityUtils.getCurrentUserId();
+            shortUrlService.deleteUserShortUrls(ids,currentUserId);
+            redirectAttributes.addFlashAttribute("successMessage", "Selected URLs have been deleted successfully");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting URLs: " + ex.getMessage());
+        }
+        return "redirect:/my-urls";
     }
 
     private void addShortUrlsDataToModel(Model model, int pageNo) {
